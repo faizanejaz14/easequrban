@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import '../services/auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -13,12 +14,36 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _signup() {
-    // Dummy signup logic for now
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+  // void _signup() {
+  //   // Dummy signup logic for now
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => LoginScreen()),
+  //   );
+  // }
+
+  void _signup() async {
+    final success = await AuthService.registerUser(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      name: _nameController.text.trim(),
+      address: _addressController.text.trim(),
+      contact: _contactController.text.trim(),
     );
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signup successful. Please log in.')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email already exists!')),
+      );
+    }
   }
 
   @override
